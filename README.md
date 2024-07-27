@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 
 
-with open('products.html', 'r') as file:
+with open('requirements.txt', 'r') as file:
     html_content = file.read()
 
 
