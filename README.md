@@ -1,46 +1,39 @@
-beautifulsoup4
-lxml
-__pycache__/
-*.pyc
-venv/
+import requests 
+URL = "https://openlibrary.org/works/OL4501700W/Gale_Warning" 
+r = requests.get(URL) 
+print(r.content)
+import requests 
+from bs4 import BeautifulSoup 
+import csv 
+
+URL = "https://openlibrary.org/works/OL4501700W/Gale_Warning" 
+r = requests.get(URL) 
+
+soup = BeautifulSoup(r.content, 'html5lib') 
 
 
-def parse_user_info(file_path):
-    users = []
-    with open(file_path, 'r', encoding='utf-8') as file:
-        lines = file.readlines()
+  books = soup.find_all('div', class_='book')
+    book_info_list = []
 
-    current_user = {}
-    for line in lines:
-        line = line.strip()
-        if line == '':
-            if current_user:
-                users.append(current_user)
-                current_user = {}
-        else:
-            key, value = line.split(': ', 1)
-            current_user[key] = value
+    for book in books:
+        title = book.find('h2', class_='book-title').text
+        author = book.find('p', class_='book-author').text.replace('Author: ', '')
+        year = book.find('p', class_='book-year').text.replace('Year: ', '')
+        book_info_list.append({'Title': title, 'Author': author, 'Year': year})
 
-    if current_user:
-        users.append(current_user)
-
-    return users
+    return book_info_list
 
 def main():
-    file_path = 'users.txt'
-    users = parse_user_info(file_path)
+    file_path = 'books.html'
+    books_info = extract_books_info(file_path)
 
-    for user in users:
-        print(f"Name: {user.get('Name', 'N/A')}")
-        print(f"Age: {user.get('Age', 'N/A')}")
-        print(f"Occupation: {user.get('Occupation', 'N/A')}")
+    # Print the extracted information
+    for book in books_info:
+        print(f"Title: {book['Title']}")
+        print(f"Author: {book['Author']}")
+        print(f"Year: {book['Year']}")
         print('---')
 
 if __name__ == '__main__':
     main()
-
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python extract_info.py
 
