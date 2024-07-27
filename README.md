@@ -1,3 +1,4 @@
+requirements.txt
 import requests 
 URL = "https://openlibrary.org/works/OL4501700W/Gale_Warning" 
 r = requests.get(URL) 
